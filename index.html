@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>THE PREDICTOOR ($predictoor)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Space Grotesk"', 'sans-serif'],
+            },
+            colors: {
+              meme: {
+                bg: '#ffffff', // Fallback
+                text: '#09090b', 
+                card: '#ffffff',
+                primary: '#22c55e', 
+                secondary: '#ef4444',
+                accent: '#8b5cf6',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        /* Gradient matching the provided image: Blue/Teal to Green */
+        background: linear-gradient(90deg, #0e7490 0%, #22c55e 100%);
+        color: #ffffff;
+        min-height: 100vh;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.1); 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.3); 
+        border-radius: 4px;
+      }
+      
+      /* Text outline utility for the meme look */
+      .text-outline {
+        text-shadow: 
+          -2px -2px 0 #fff,  
+           2px -2px 0 #fff,
+          -2px  2px 0 #fff,
+           2px  2px 0 #fff;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.3"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
