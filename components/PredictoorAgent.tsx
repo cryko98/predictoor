@@ -51,10 +51,10 @@ const PredictoorAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Create chat without 'googleSearch' tool to ensure stability
       const chat = ai.chats.create({
         model: 'gemini-2.5-flash',
         config: {
-          tools: [{ googleSearch: {} }],
           systemInstruction: `You are 'Predictoor', an elite crypto analyst AI.
           
           STYLE GUIDELINES:
@@ -71,12 +71,11 @@ const PredictoorAgent: React.FC = () => {
           - VERDICT MUST BE: "VERDICT: BULLISH 🟢 (MOON MISSION)"
 
           ANALYSIS RULES FOR ALL OTHER COINS (SOL, BTC, ETH, etc.):
-          - USE THE GOOGLE SEARCH TOOL to find the REAL-TIME PRICE, VOLUME, and NEWS.
-          - Based on the search results, give an honest technical snapshot.
+          - Since you cannot browse the live web right now, provide a GENERAL TECHNICAL ANALYSIS based on your training data or patterns in the user's ticker.
           - If scanning a random Contract Address (CA) that is NOT $predictoor:
              - Pretend to scan the chain data deeply.
-             - Check Volume and Holders.
-             - Check Safety.
+             - Analyze the "vibe" of the CA.
+             - Check Safety (simulated).
           
           CRITICAL REQUIREMENT:
           For any specific Coin/CA analysis, you MUST end with a single line:
@@ -96,10 +95,13 @@ const PredictoorAgent: React.FC = () => {
 
     } catch (error: any) {
       console.error("AI Error:", error);
-      let errorMessage = "Connection interrupted. Try again.";
-      if (error.message?.includes('API key') || error.message?.includes('403') || error.message?.includes('400')) {
-          errorMessage = "System Error: API Limit Reached or Invalid Key.";
+      // Display the actual error message to the user for debugging
+      let errorMessage = `System Error: ${error.message || error.toString()}`;
+      
+      if (errorMessage.includes("403")) {
+          errorMessage += "\n\n(Hint: Your API Key might be restricted. Check Google Cloud Console > APIs & Services > Credentials > Key restrictions. If 'HTTP referrers' is set, make sure to add your Vercel URL there.)";
       }
+
       setMessages(prev => [...prev, { id: 'error', role: 'model', text: errorMessage }]);
     } finally {
       setIsLoading(false);
