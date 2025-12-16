@@ -6,14 +6,6 @@ const STORAGE_KEY = 'meme_oracle_markets';
 // Fallback seed data
 const SEED_DATA: PredictionMarket[] = [
   {
-    id: '1',
-    question: 'Will Bitcoin hit $100k before 2025?',
-    yesVotes: 1250,
-    noVotes: 420,
-    totalVolume: 50000,
-    createdAt: Date.now(),
-  },
-  {
     id: '2',
     question: 'Is this memecoin going to the moon?',
     yesVotes: 9999,
@@ -93,7 +85,8 @@ export const createMarket = async (question: string): Promise<void> => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([newMarket, ...markets]));
 };
 
-export const voteMarket = async (id: string, option: 'YES' | 'NO', amount: number = 10): Promise<void> => {
+export const voteMarket = async (id: string, option: 'YES' | 'NO'): Promise<void> => {
+  // Free voting, no amount parameter needed
   if (isSupabaseConfigured() && supabase) {
     // Note: In a production app, use an RPC function to increment atomically.
     // For this simple version, we read-modify-write (susceptible to race conditions but easier to setup).
@@ -104,7 +97,7 @@ export const voteMarket = async (id: string, option: 'YES' | 'NO', amount: numbe
       const updates = {
         yes_votes: option === 'YES' ? current.yes_votes + 1 : current.yes_votes,
         no_votes: option === 'NO' ? current.no_votes + 1 : current.no_votes,
-        total_volume: current.total_volume + amount
+        // We do not increase total_volume for free votes
       };
       
       await supabase.from('markets').update(updates).eq('id', id);
@@ -120,7 +113,7 @@ export const voteMarket = async (id: string, option: 'YES' | 'NO', amount: numbe
         ...m,
         yesVotes: option === 'YES' ? m.yesVotes + 1 : m.yesVotes,
         noVotes: option === 'NO' ? m.noVotes + 1 : m.noVotes,
-        totalVolume: m.totalVolume + amount
+        // No volume change
       };
     }
     return m;

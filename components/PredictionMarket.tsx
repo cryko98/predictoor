@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { getMarkets, createMarket, voteMarket } from '../services/marketService';
 import { PredictionMarket as MarketType } from '../types';
-import { Plus, TrendingUp, DollarSign, Loader2 } from 'lucide-react';
+import { Plus, TrendingUp, Users, Loader2 } from 'lucide-react';
 import { isSupabaseConfigured } from '../services/supabaseClient';
 
-const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'YES' | 'NO') => void; isVoting: boolean }> = ({ market, onVote, isVoting }) => {
+const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'YES' | 'NO') => Promise<void>; isVoting: boolean }> = ({ market, onVote, isVoting }) => {
   const totalVotes = market.yesVotes + market.noVotes;
   const yesPercentage = totalVotes === 0 ? 50 : Math.round((market.yesVotes / totalVotes) * 100);
   const noPercentage = 100 - yesPercentage;
+  
+  // Simple state to show loading only on the clicked card
+  const [localVoting, setLocalVoting] = useState(false);
+
+  const handleVoteClick = async (option: 'YES' | 'NO') => {
+      setLocalVoting(true);
+      await onVote(market.id, option);
+      setLocalVoting(false);
+  };
+
+  const isDisabled = isVoting || localVoting;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all group">
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all group relative overflow-hidden">
       
       <div className="mb-4">
         <h3 className="text-lg font-bold text-black leading-tight group-hover:text-blue-600 transition-colors">
@@ -21,20 +32,20 @@ const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'Y
       <div className="flex gap-2 mb-4">
         {/* Yes Button */}
         <button 
-            disabled={isVoting}
-            onClick={() => onVote(market.id, 'YES')}
-            className="flex-1 bg-green-50 hover:bg-green-100 disabled:opacity-50 border border-green-200 rounded-lg p-2 flex justify-between items-center transition-colors group/btn"
+            disabled={isDisabled}
+            onClick={() => handleVoteClick('YES')}
+            className="flex-1 bg-green-50 hover:bg-green-100 disabled:opacity-50 border border-green-200 rounded-lg p-2 flex justify-between items-center transition-colors group/btn active:scale-95"
         >
-            <span className="text-green-700 font-bold text-sm group-hover/btn:scale-105 transition-transform">Yes</span>
+            <span className="text-green-700 font-bold text-sm group-hover/btn:scale-105 transition-transform">VOTE YES</span>
             <span className="text-green-700 font-bold text-sm">{yesPercentage}%</span>
         </button>
         {/* No Button */}
         <button 
-            disabled={isVoting}
-            onClick={() => onVote(market.id, 'NO')}
-            className="flex-1 bg-red-50 hover:bg-red-100 disabled:opacity-50 border border-red-200 rounded-lg p-2 flex justify-between items-center transition-colors group/btn"
+            disabled={isDisabled}
+            onClick={() => handleVoteClick('NO')}
+            className="flex-1 bg-red-50 hover:bg-red-100 disabled:opacity-50 border border-red-200 rounded-lg p-2 flex justify-between items-center transition-colors group/btn active:scale-95"
         >
-            <span className="text-red-700 font-bold text-sm group-hover/btn:scale-105 transition-transform">No</span>
+            <span className="text-red-700 font-bold text-sm group-hover/btn:scale-105 transition-transform">VOTE NO</span>
             <span className="text-red-700 font-bold text-sm">{noPercentage}%</span>
         </button>
       </div>
@@ -48,11 +59,12 @@ const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'Y
 
       <div className="flex items-center justify-between text-xs text-gray-500 font-mono font-medium">
         <div className="flex items-center gap-1">
-            <DollarSign size={12} className="text-gray-400" />
-            <span>Vol: ${market.totalVolume.toLocaleString()}</span>
+            <Users size={12} className="text-gray-400" />
+            <span>{totalVotes} Votes</span>
         </div>
         <div>
-            {totalVotes} Votes
+            {/* Volume removed as requested */}
+            Free Vote
         </div>
       </div>
     </div>
@@ -61,23 +73,33 @@ const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'Y
 
 const CreateMarketModal: React.FC<{ isOpen: boolean; onClose: () => void; onSubmit: (q: string) => void; isCreating: boolean }> = ({ isOpen, onClose, onSubmit, isCreating }) => {
     const [question, setQuestion] = useState('');
+    const MAX_LENGTH = 100;
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
             <div className="bg-white border border-gray-100 w-full max-w-md rounded-2xl p-6 shadow-2xl">
                 <h2 className="text-2xl font-black text-black mb-1">Create New Market</h2>
                 <p className="text-gray-500 mb-4 text-sm">What do you want to predict?</p>
                 
-                <textarea 
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 transition-all placeholder:text-gray-400"
-                    rows={3}
-                    placeholder="Ask a question (e.g., Will SOL flip ETH?)"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    disabled={isCreating}
-                />
+                <div className="mb-4">
+                    <textarea 
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400 resize-none"
+                        rows={3}
+                        placeholder="Ask a question (e.g., Will SOL flip ETH?)"
+                        value={question}
+                        maxLength={MAX_LENGTH}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        disabled={isCreating}
+                    />
+                    <div className="flex justify-end mt-1">
+                        <span className={`text-xs font-mono font-medium ${question.length === MAX_LENGTH ? 'text-red-500' : 'text-gray-400'}`}>
+                            {question.length}/{MAX_LENGTH}
+                        </span>
+                    </div>
+                </div>
+
                 <div className="flex justify-end gap-3">
                     <button onClick={onClose} disabled={isCreating} className="px-4 py-2 text-gray-500 hover:text-black transition-colors font-medium">Cancel</button>
                     <button 
@@ -119,11 +141,16 @@ const PredictionMarket: React.FC = () => {
   }, []);
 
   const handleVote = async (id: string, option: 'YES' | 'NO') => {
-    // Optimistic update could go here, but for simplicity we wait for DB
-    setActionLoading(true);
-    await voteMarket(id, option);
-    await fetchData(); // Refresh data
-    setActionLoading(false);
+    try {
+        setActionLoading(true);
+        // Simple free vote, no wallet needed
+        await voteMarket(id, option); 
+        await fetchData();
+    } catch (error) {
+        console.error("Vote failed:", error);
+    } finally {
+        setActionLoading(false);
+    }
   };
 
   const handleCreate = async (question: string) => {
@@ -145,7 +172,7 @@ const PredictionMarket: React.FC = () => {
                     LIVE PREDICTIONS
                 </h2>
                 <div className="flex items-center gap-2">
-                    <p className="text-white/90 text-lg font-medium drop-shadow-sm">Community voted odds backed by $predictoor</p>
+                    <p className="text-white/90 text-lg font-medium drop-shadow-sm">Vote on the future. Free & decentralized.</p>
                     {!isSupabaseConfigured() && (
                         <span className="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded font-bold uppercase">Demo Mode</span>
                     )}

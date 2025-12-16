@@ -37,9 +37,14 @@ const Hero: React.FC = () => {
             <button className="bg-black text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-zinc-800 transition-all shadow-xl hover:scale-105 hover:-translate-y-1 border-2 border-white/20">
                 Start Predicting
             </button>
-            <button className="bg-white text-black font-bold text-lg px-10 py-4 rounded-full hover:bg-gray-100 transition-all shadow-lg border-2 border-white hover:border-gray-300">
+            <a 
+                href="https://dexscreener.com/solana/9ftnbzpAP4SUkmHMoFuX4ofvDXCHxbrTXKiSFL4Wpump"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white text-black font-bold text-lg px-10 py-4 rounded-full hover:bg-gray-100 transition-all shadow-lg border-2 border-white hover:border-gray-300 flex items-center justify-center"
+            >
                 View Chart
-            </button>
+            </a>
           </div>
 
         </div>
