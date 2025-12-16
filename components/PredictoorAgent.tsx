@@ -19,21 +19,38 @@ const PredictoorAgent: React.FC = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Ref for the scrollable container instead of a dummy div at the bottom
+  // Ref for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  // Initialize Gemini
-  // In Vite/Vercel frontend, we must use import.meta.env.VITE_API_KEY
-  const apiKey = (import.meta as any).env?.VITE_API_KEY;
+  // Robust API Key Retrieval
+  const getApiKey = () => {
+    try {
+        // 1. Try Vite standard (import.meta.env)
+        // @ts-ignore
+        if (import.meta.env?.VITE_API_KEY) {
+            // @ts-ignore
+            return import.meta.env.VITE_API_KEY;
+        }
+    } catch (e) {}
+
+    try {
+        // 2. Try process.env fallback (common in some Vercel build configs)
+        if (typeof process !== 'undefined' && process.env?.VITE_API_KEY) {
+            return process.env.VITE_API_KEY;
+        }
+    } catch (e) {}
+    
+    return null;
+  };
+
+  const apiKey = getApiKey();
   const ai = new GoogleGenAI({ apiKey: apiKey || 'DEMO_KEY' }); 
   
   const botAvatarUrl = "https://pbs.twimg.com/media/G8TkHNYWoAIWHeT?format=jpg&name=medium";
 
-  // Optimized auto-scroll that prevents the whole page from jumping
   useEffect(() => {
     if (scrollContainerRef.current) {
       const { scrollHeight, clientHeight } = scrollContainerRef.current;
-      // Only scroll the container, not the window
       scrollContainerRef.current.scrollTo({
         top: scrollHeight - clientHeight,
         behavior: 'smooth'
@@ -50,10 +67,17 @@ const PredictoorAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Logic: If no API key is actually present
+      // Check if key is missing or dummy
       if (!apiKey || apiKey === 'DEMO_KEY') {
+        console.warn("API Key missing. Current value:", apiKey);
         setTimeout(() => {
-            const simResponse = "System Error: Missing API Key. \n\nPlease ensure 'VITE_API_KEY' is set in your Vercel Environment Variables.\n\nHowever, my local cache says: $predictoor is programmed for the moon. 🚀 (Demo Mode)";
+            const simResponse = `System Error: Missing API Key.
+
+IMPORTANT: If you just added 'VITE_API_KEY' to Vercel, you must REDEPLOY the project for changes to take effect.
+1. Go to Vercel Dashboard -> Deployments
+2. Click 'Redeploy' on the latest commit.
+
+(Running in Demo Mode: $predictoor is programmed for the moon 🚀)`;
             setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'model', text: simResponse }]);
             setIsLoading(false);
         }, 1500);
@@ -63,7 +87,6 @@ const PredictoorAgent: React.FC = () => {
       const chat = ai.chats.create({
         model: 'gemini-2.5-flash',
         config: {
-          // Enable Google Search for real-time data
           tools: [{ googleSearch: {} }],
           systemInstruction: `You are 'Predictoor', an elite crypto analyst AI.
           
@@ -104,9 +127,13 @@ const PredictoorAgent: React.FC = () => {
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'model', text: responseText }]);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Error:", error);
-      setMessages(prev => [...prev, { id: 'error', role: 'model', text: "Connection interrupted. Try again." }]);
+      let errorMessage = "Connection interrupted. Try again.";
+      if (error.message?.includes('API key')) {
+          errorMessage = "API Key Error: Check Vercel settings and Redeploy.";
+      }
+      setMessages(prev => [...prev, { id: 'error', role: 'model', text: errorMessage }]);
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +179,7 @@ const PredictoorAgent: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Chat Window - Scroll logic attached here */}
+                {/* Chat Window */}
                 <div 
                     ref={scrollContainerRef}
                     className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-thin scrollbar-thumb-green-900 scrollbar-track-black"
