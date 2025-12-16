@@ -36,8 +36,17 @@ const OraclePlinko: React.FC = () => {
   const pegsRef = useRef<{x: number, y: number}[]>([]);
   
   // Critical: Use ref for selectedBucket to ensure the game loop sees the immediate value
-  // without waiting for React state update/re-render cycles.
   const selectedBucketRef = useRef<number | null>(null);
+  
+  // Refs for game state accessed inside the loop to avoid stale closures
+  const scoreRef = useRef(0);
+  const livesRef = useRef(3);
+  const usernameRef = useRef('');
+
+  // Sync refs with state
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { livesRef.current = lives; }, [lives]);
+  useEffect(() => { usernameRef.current = username; }, [username]);
 
   // --- Initialization ---
   useEffect(() => {
@@ -143,8 +152,8 @@ const OraclePlinko: React.FC = () => {
     // Draw Buckets
     const bucketWidth = CANVAS_WIDTH / BUCKET_COUNT;
     for (let i = 0; i < BUCKET_COUNT; i++) {
-        // Highlight logic
-        const isSelected = i === selectedBucket;
+        // Highlight logic - USE REFS to avoid stale closures in animation loop
+        const isSelected = i === selectedBucketRef.current;
         const isWinning = i === winningBucket && (gameState === 'round_end' || gameState === 'gameover');
         
         if (isWinning) ctx.fillStyle = 'rgba(34, 197, 94, 0.6)'; // Strong Green
@@ -196,7 +205,7 @@ const OraclePlinko: React.FC = () => {
   const handleDrop = (bucketIndex: number) => {
     if (lives <= 0) return;
     
-    // Set both state (for UI) and ref (for Logic)
+    // Set both state (for UI) and ref (for Logic/Animation Loop)
     setSelectedBucket(bucketIndex);
     selectedBucketRef.current = bucketIndex;
     
@@ -218,12 +227,16 @@ const OraclePlinko: React.FC = () => {
   const handleRoundEnd = (resultBucket: number) => {
     setWinningBucket(resultBucket);
     
-    // Use Ref to check prediction because state might be stale in closure
+    // Use Refs for logic because this function is called from the animation loop closure
+    // which might contain stale state values.
     const prediction = selectedBucketRef.current; 
+    const currentScore = scoreRef.current;
+    const currentLives = livesRef.current;
+    const currentUser = usernameRef.current;
+
     const isCorrectPrediction = resultBucket === prediction;
     
     let pointsWon = 0;
-
     if (isCorrectPrediction) {
         pointsWon = BUCKET_SCORES[resultBucket];
         setScore(prev => prev + pointsWon);
@@ -232,7 +245,7 @@ const OraclePlinko: React.FC = () => {
     setLastRoundPoints(pointsWon);
     
     // Decrease Lives
-    const newLives = lives - 1;
+    const newLives = currentLives - 1;
     setLives(newLives);
 
     if (newLives > 0) {
@@ -240,8 +253,15 @@ const OraclePlinko: React.FC = () => {
     } else {
         // Game Over
         setGameState('gameover');
-        submitScore(username.toUpperCase(), score + pointsWon);
-        fetchLeaderboard();
+        const finalScore = currentScore + pointsWon;
+        
+        // Submit score properly waiting for promise resolution
+        submitScore(currentUser.toUpperCase(), finalScore)
+            .then(() => {
+                // Fetch leaderboard only after submission is complete
+                fetchLeaderboard();
+            })
+            .catch(err => console.error("Score submission failed:", err));
     }
   };
 
