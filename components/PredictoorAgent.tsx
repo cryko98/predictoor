@@ -23,7 +23,8 @@ const PredictoorAgent: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Initialize Gemini
-  const apiKey = process.env.API_KEY; 
+  // In Vite/Vercel frontend, we must use import.meta.env.VITE_API_KEY
+  const apiKey = (import.meta as any).env?.VITE_API_KEY;
   const ai = new GoogleGenAI({ apiKey: apiKey || 'DEMO_KEY' }); 
   
   const botAvatarUrl = "https://pbs.twimg.com/media/G8TkHNYWoAIWHeT?format=jpg&name=medium";
@@ -49,10 +50,10 @@ const PredictoorAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Logic: If no API key is actually present in this demo environment, simulate a response
+      // Logic: If no API key is actually present
       if (!apiKey || apiKey === 'DEMO_KEY') {
         setTimeout(() => {
-            const simResponse = "System Error: Missing API Key. \n\nHowever, my local cache says: $predictoor is programmed for the moon. 🚀 (Demo Mode)";
+            const simResponse = "System Error: Missing API Key. \n\nPlease ensure 'VITE_API_KEY' is set in your Vercel Environment Variables.\n\nHowever, my local cache says: $predictoor is programmed for the moon. 🚀 (Demo Mode)";
             setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'model', text: simResponse }]);
             setIsLoading(false);
         }, 1500);
