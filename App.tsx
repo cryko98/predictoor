@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import PredictionMarket from './components/PredictionMarket';
 import MemeGenerator from './components/MemeGenerator';
 import PredictoorAgent from './components/PredictoorAgent';
+import OraclePlinko from './components/OraclePlinko';
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
 
         {/* AI Agent Section */}
         <PredictoorAgent />
+
+        {/* Oracle Plinko Minigame */}
+        <OraclePlinko />
         
         {/* Prediction Market Section */}
         <PredictionMarket />
