@@ -33,17 +33,32 @@ const Hero: React.FC = () => {
             Win big with the most accurate memecoin on the block.
           </p>
 
-          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto justify-center">
-            <button className="bg-black text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-zinc-800 transition-all shadow-xl hover:scale-105 hover:-translate-y-1 border-2 border-white/20">
-                Start Predicting
-            </button>
+          <div className="flex flex-col items-center gap-6 w-full">
+            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto justify-center">
+                <button className="bg-black text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-zinc-800 transition-all shadow-xl hover:scale-105 hover:-translate-y-1 border-2 border-white/20">
+                    Start Predicting
+                </button>
+                <a 
+                    href="https://dexscreener.com/solana/9ftnbzpAP4SUkmHMoFuX4ofvDXCHxbrTXKiSFL4Wpump"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white text-black font-bold text-lg px-10 py-4 rounded-full hover:bg-gray-100 transition-all shadow-lg border-2 border-white hover:border-gray-300 flex items-center justify-center"
+                >
+                    View Chart
+                </a>
+            </div>
+
+            {/* Added X Link below buttons as requested */}
             <a 
-                href="https://dexscreener.com/solana/9ftnbzpAP4SUkmHMoFuX4ofvDXCHxbrTXKiSFL4Wpump"
+                href="https://x.com/predictoorcto"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white text-black font-bold text-lg px-10 py-4 rounded-full hover:bg-gray-100 transition-all shadow-lg border-2 border-white hover:border-gray-300 flex items-center justify-center"
+                rel="noreferrer"
+                className="text-white/80 hover:text-white font-mono text-sm underline decoration-white/30 hover:decoration-white transition-all flex items-center gap-2"
             >
-                View Chart
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                Follow @predictoorcto
             </a>
           </div>
 

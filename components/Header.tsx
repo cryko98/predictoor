@@ -26,10 +26,10 @@ const Header: React.FC = () => {
         </div>
 
         {/* Desktop Actions */}
-        <div className="flex items-center gap-3 md:gap-6">
+        <div className="flex items-center gap-2 md:gap-4">
             
             {/* Contract Address Box (Hidden on super small screens) */}
-            <div className="hidden md:flex items-center gap-2 bg-white/20 border border-white/30 rounded-full pl-4 pr-1 py-1 shadow-inner backdrop-blur-sm">
+            <div className="hidden md:flex items-center gap-2 bg-white/20 border border-white/30 rounded-full pl-4 pr-1 py-1 shadow-inner backdrop-blur-sm mr-2">
                 <span className="text-white/80 text-sm font-bold">CA:</span>
                 <span className="text-white text-sm font-mono font-medium truncate max-w-[150px]">{ca}</span>
                 <button 
@@ -41,7 +41,21 @@ const Header: React.FC = () => {
                 </button>
             </div>
 
-            {/* X Community Link (Visible on all screens now) */}
+            {/* Follow on X Link */}
+            <a 
+                href="https://x.com/predictoorcto" 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all group shadow-md hover:shadow-lg border border-white/10"
+                title="Follow @predictoorcto"
+            >
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                <span className="font-bold text-sm hidden sm:inline">Follow</span>
+            </a>
+
+            {/* X Community Link */}
             <a 
                 href="https://x.com/i/communities/2000898705369829547" 
                 target="_blank" 

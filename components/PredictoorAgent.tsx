@@ -22,28 +22,22 @@ const PredictoorAgent: React.FC = () => {
   // Ref for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  // Robust API Key Retrieval
-  const getApiKey = () => {
-    try {
-        // 1. Try Vite standard (import.meta.env)
-        // @ts-ignore
-        if (import.meta.env?.VITE_API_KEY) {
-            // @ts-ignore
-            return import.meta.env.VITE_API_KEY;
-        }
-    } catch (e) {}
+  // DIRECT API KEY ACCESS FOR VITE
+  // Accessing import.meta.env safely
+  const env = (import.meta as any).env || {};
+  const apiKey = env.VITE_API_KEY;
 
-    try {
-        // 2. Try process.env fallback (common in some Vercel build configs)
-        if (typeof process !== 'undefined' && process.env?.VITE_API_KEY) {
-            return process.env.VITE_API_KEY;
-        }
-    } catch (e) {}
-    
-    return null;
-  };
+  // Debugging: Log to console (safe to expose existence, not value)
+  useEffect(() => {
+    console.log("[Predictoor] Checking for VITE_API_KEY...");
+    if (apiKey) {
+        console.log("[Predictoor] Key found (length: " + apiKey.length + ")");
+    } else {
+        console.error("[Predictoor] VITE_API_KEY is missing or undefined!");
+        console.log("[Predictoor] Available env keys:", Object.keys(env).filter(k => k.startsWith('VITE_')));
+    }
+  }, [apiKey, env]);
 
-  const apiKey = getApiKey();
   const ai = new GoogleGenAI({ apiKey: apiKey || 'DEMO_KEY' }); 
   
   const botAvatarUrl = "https://pbs.twimg.com/media/G8TkHNYWoAIWHeT?format=jpg&name=medium";
@@ -67,20 +61,22 @@ const PredictoorAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Check if key is missing or dummy
-      if (!apiKey || apiKey === 'DEMO_KEY') {
-        console.warn("API Key missing. Current value:", apiKey);
+      // Check if key is missing
+      if (!apiKey) {
+        console.warn("API Key missing.");
         setTimeout(() => {
-            const simResponse = `System Error: Missing API Key.
+            const simResponse = `SYSTEM ERROR: API Key Missing.
 
-IMPORTANT: If you just added 'VITE_API_KEY' to Vercel, you must REDEPLOY the project for changes to take effect.
-1. Go to Vercel Dashboard -> Deployments
-2. Click 'Redeploy' on the latest commit.
+To fix this on Vercel:
+1. Go to Settings -> Environment Variables
+2. Add 'VITE_API_KEY' (must start with VITE_)
+3. Value should be your Gemini API key
+4. IMPORTANT: Redeploy your project (Deployments -> ... -> Redeploy)
 
-(Running in Demo Mode: $predictoor is programmed for the moon 🚀)`;
+(Demo Mode: $predictoor is programmed for the moon 🚀)`;
             setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'model', text: simResponse }]);
             setIsLoading(false);
-        }, 1500);
+        }, 1000);
         return;
       }
 
@@ -130,8 +126,8 @@ IMPORTANT: If you just added 'VITE_API_KEY' to Vercel, you must REDEPLOY the pro
     } catch (error: any) {
       console.error("AI Error:", error);
       let errorMessage = "Connection interrupted. Try again.";
-      if (error.message?.includes('API key')) {
-          errorMessage = "API Key Error: Check Vercel settings and Redeploy.";
+      if (error.message?.includes('API key') || error.message?.includes('403') || error.message?.includes('400')) {
+          errorMessage = "API Error: Key might be invalid or quota exceeded. Check Vercel logs.";
       }
       setMessages(prev => [...prev, { id: 'error', role: 'model', text: errorMessage }]);
     } finally {
