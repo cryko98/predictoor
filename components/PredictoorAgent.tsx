@@ -22,23 +22,13 @@ const PredictoorAgent: React.FC = () => {
   // Ref for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  // DIRECT API KEY ACCESS FOR VITE
-  // Accessing import.meta.env safely
+  // DIRECT API KEY ACCESS
+  // Priority 1: Vercel/Vite Environment Variable
+  // Priority 2: Hardcoded Key provided by user (Fallback to ensure it works)
   const env = (import.meta as any).env || {};
-  const apiKey = env.VITE_API_KEY;
+  const apiKey = env.VITE_API_KEY || "AIzaSyARmYNQRlzWCwWDtPaU1u57Y6iODogdbmI";
 
-  // Debugging: Log to console (safe to expose existence, not value)
-  useEffect(() => {
-    console.log("[Predictoor] Checking for VITE_API_KEY...");
-    if (apiKey) {
-        console.log("[Predictoor] Key found (length: " + apiKey.length + ")");
-    } else {
-        console.error("[Predictoor] VITE_API_KEY is missing or undefined!");
-        console.log("[Predictoor] Available env keys:", Object.keys(env).filter(k => k.startsWith('VITE_')));
-    }
-  }, [apiKey, env]);
-
-  const ai = new GoogleGenAI({ apiKey: apiKey || 'DEMO_KEY' }); 
+  const ai = new GoogleGenAI({ apiKey: apiKey }); 
   
   const botAvatarUrl = "https://pbs.twimg.com/media/G8TkHNYWoAIWHeT?format=jpg&name=medium";
 
@@ -61,25 +51,6 @@ const PredictoorAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Check if key is missing
-      if (!apiKey) {
-        console.warn("API Key missing.");
-        setTimeout(() => {
-            const simResponse = `SYSTEM ERROR: API Key Missing.
-
-To fix this on Vercel:
-1. Go to Settings -> Environment Variables
-2. Add 'VITE_API_KEY' (must start with VITE_)
-3. Value should be your Gemini API key
-4. IMPORTANT: Redeploy your project (Deployments -> ... -> Redeploy)
-
-(Demo Mode: $predictoor is programmed for the moon 🚀)`;
-            setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'model', text: simResponse }]);
-            setIsLoading(false);
-        }, 1000);
-        return;
-      }
-
       const chat = ai.chats.create({
         model: 'gemini-2.5-flash',
         config: {
@@ -127,7 +98,7 @@ To fix this on Vercel:
       console.error("AI Error:", error);
       let errorMessage = "Connection interrupted. Try again.";
       if (error.message?.includes('API key') || error.message?.includes('403') || error.message?.includes('400')) {
-          errorMessage = "API Error: Key might be invalid or quota exceeded. Check Vercel logs.";
+          errorMessage = "System Error: API Limit Reached or Invalid Key.";
       }
       setMessages(prev => [...prev, { id: 'error', role: 'model', text: errorMessage }]);
     } finally {
