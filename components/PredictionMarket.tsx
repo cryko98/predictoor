@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getMarkets, createMarket, voteMarket } from '../services/marketService';
+import { getMarkets, createMarket, voteMarket, hasUserVoted } from '../services/marketService';
 import { PredictionMarket as MarketType } from '../types';
-import { Plus, TrendingUp, Users, Loader2 } from 'lucide-react';
+import { Plus, TrendingUp, Users, Loader2, CheckCircle2 } from 'lucide-react';
 import { isSupabaseConfigured } from '../services/supabaseClient';
 
 const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'YES' | 'NO') => Promise<void>; isVoting: boolean }> = ({ market, onVote, isVoting }) => {
@@ -9,23 +9,33 @@ const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'Y
   const yesPercentage = totalVotes === 0 ? 50 : Math.round((market.yesVotes / totalVotes) * 100);
   const noPercentage = 100 - yesPercentage;
   
-  // Simple state to show loading only on the clicked card
+  // State to track if user has voted on THIS specific card
+  const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [localVoting, setLocalVoting] = useState(false);
 
+  useEffect(() => {
+    // Check voting status on mount
+    setAlreadyVoted(hasUserVoted(market.id));
+  }, [market.id]);
+
   const handleVoteClick = async (option: 'YES' | 'NO') => {
+      if (alreadyVoted) return;
+
       setLocalVoting(true);
       await onVote(market.id, option);
+      setAlreadyVoted(true); // Optimistically update UI
       setLocalVoting(false);
   };
 
-  const isDisabled = isVoting || localVoting;
+  const isDisabled = isVoting || localVoting || alreadyVoted;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all group relative overflow-hidden">
+    <div className={`bg-white border rounded-2xl p-5 shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all group relative overflow-hidden ${alreadyVoted ? 'border-green-500/30 bg-green-50/50' : 'border-gray-200 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-1'}`}>
       
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-black leading-tight group-hover:text-blue-600 transition-colors">
+        <h3 className="text-lg font-bold text-black leading-tight group-hover:text-blue-600 transition-colors flex justify-between items-start gap-2">
           {market.question}
+          {alreadyVoted && <CheckCircle2 className="text-green-500 shrink-0" size={20} />}
         </h3>
       </div>
 
@@ -34,25 +44,39 @@ const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'Y
         <button 
             disabled={isDisabled}
             onClick={() => handleVoteClick('YES')}
-            className="flex-1 bg-green-50 hover:bg-green-100 disabled:opacity-50 border border-green-200 rounded-lg p-2 flex justify-between items-center transition-colors group/btn active:scale-95"
+            className={`flex-1 rounded-lg p-2 flex justify-between items-center transition-colors border group/btn
+                ${alreadyVoted 
+                    ? 'bg-gray-100 border-gray-200 opacity-70 cursor-not-allowed' 
+                    : 'bg-green-50 hover:bg-green-100 border-green-200 active:scale-95 disabled:opacity-50'
+                }
+            `}
         >
-            <span className="text-green-700 font-bold text-sm group-hover/btn:scale-105 transition-transform">VOTE YES</span>
-            <span className="text-green-700 font-bold text-sm">{yesPercentage}%</span>
+            <span className={`font-bold text-sm ${alreadyVoted ? 'text-gray-500' : 'text-green-700 group-hover/btn:scale-105 transition-transform'}`}>
+                {alreadyVoted ? 'VOTED' : 'VOTE YES'}
+            </span>
+            <span className={`font-bold text-sm ${alreadyVoted ? 'text-gray-500' : 'text-green-700'}`}>{yesPercentage}%</span>
         </button>
         {/* No Button */}
         <button 
             disabled={isDisabled}
             onClick={() => handleVoteClick('NO')}
-            className="flex-1 bg-red-50 hover:bg-red-100 disabled:opacity-50 border border-red-200 rounded-lg p-2 flex justify-between items-center transition-colors group/btn active:scale-95"
+            className={`flex-1 rounded-lg p-2 flex justify-between items-center transition-colors border group/btn
+                ${alreadyVoted 
+                    ? 'bg-gray-100 border-gray-200 opacity-70 cursor-not-allowed' 
+                    : 'bg-red-50 hover:bg-red-100 border-red-200 active:scale-95 disabled:opacity-50'
+                }
+            `}
         >
-            <span className="text-red-700 font-bold text-sm group-hover/btn:scale-105 transition-transform">VOTE NO</span>
-            <span className="text-red-700 font-bold text-sm">{noPercentage}%</span>
+            <span className={`font-bold text-sm ${alreadyVoted ? 'text-gray-500' : 'text-red-700 group-hover/btn:scale-105 transition-transform'}`}>
+                {alreadyVoted ? 'VOTED' : 'VOTE NO'}
+            </span>
+            <span className={`font-bold text-sm ${alreadyVoted ? 'text-gray-500' : 'text-red-700'}`}>{noPercentage}%</span>
         </button>
       </div>
 
       <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-3">
         <div 
-            className="h-full bg-green-500 rounded-full" 
+            className={`h-full rounded-full ${alreadyVoted ? 'bg-green-600/60' : 'bg-green-500'}`}
             style={{ width: `${yesPercentage}%` }}
         />
       </div>
@@ -63,8 +87,7 @@ const MarketCard: React.FC<{ market: MarketType; onVote: (id: string, option: 'Y
             <span>{totalVotes} Votes</span>
         </div>
         <div>
-            {/* Volume removed as requested */}
-            Free Vote
+            {alreadyVoted ? <span className="text-green-600 font-bold">Vote Recorded</span> : 'Free Vote'}
         </div>
       </div>
     </div>

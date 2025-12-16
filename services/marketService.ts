@@ -2,6 +2,7 @@ import { PredictionMarket } from '../types';
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 const STORAGE_KEY = 'meme_oracle_markets';
+const USER_VOTES_KEY = 'predictoor_user_votes';
 
 // Fallback seed data
 const SEED_DATA: PredictionMarket[] = [
@@ -15,7 +16,7 @@ const SEED_DATA: PredictionMarket[] = [
   }
 ];
 
-// --- Helper for LocalStorage (Fallback) ---
+// --- Helper for LocalStorage (Markets) ---
 const getLocalMarkets = (): PredictionMarket[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) {
@@ -23,6 +24,30 @@ const getLocalMarkets = (): PredictionMarket[] => {
     return SEED_DATA;
   }
   return JSON.parse(stored);
+};
+
+// --- Helper for LocalStorage (User Votes) ---
+export const hasUserVoted = (marketId: string): boolean => {
+  try {
+    const stored = localStorage.getItem(USER_VOTES_KEY);
+    const votes = stored ? JSON.parse(stored) : [];
+    return votes.includes(marketId);
+  } catch (e) {
+    return false;
+  }
+};
+
+const markUserAsVoted = (marketId: string) => {
+  try {
+    const stored = localStorage.getItem(USER_VOTES_KEY);
+    const votes = stored ? JSON.parse(stored) : [];
+    if (!votes.includes(marketId)) {
+      votes.push(marketId);
+      localStorage.setItem(USER_VOTES_KEY, JSON.stringify(votes));
+    }
+  } catch (e) {
+    console.error("Failed to save vote locally", e);
+  }
 };
 
 // --- Main Async Functions ---
@@ -86,6 +111,12 @@ export const createMarket = async (question: string): Promise<void> => {
 };
 
 export const voteMarket = async (id: string, option: 'YES' | 'NO'): Promise<void> => {
+  // Check if already voted
+  if (hasUserVoted(id)) {
+      console.warn("User already voted on this market");
+      return;
+  }
+
   // Free voting, no amount parameter needed
   if (isSupabaseConfigured() && supabase) {
     // Note: In a production app, use an RPC function to increment atomically.
@@ -100,7 +131,10 @@ export const voteMarket = async (id: string, option: 'YES' | 'NO'): Promise<void
         // We do not increase total_volume for free votes
       };
       
-      await supabase.from('markets').update(updates).eq('id', id);
+      const { error } = await supabase.from('markets').update(updates).eq('id', id);
+      if (!error) {
+        markUserAsVoted(id);
+      }
     }
     return;
   }
@@ -119,4 +153,5 @@ export const voteMarket = async (id: string, option: 'YES' | 'NO'): Promise<void
     return m;
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  markUserAsVoted(id);
 };
