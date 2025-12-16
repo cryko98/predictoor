@@ -2,6 +2,7 @@ import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PredictionMarket from './components/PredictionMarket';
+import MemeGenerator from './components/MemeGenerator';
 import PredictoorAgent from './components/PredictoorAgent';
 
 function App() {
@@ -10,11 +11,15 @@ function App() {
       <Header />
       <main>
         <Hero />
-        
-        {/* AI Agent Section replaces the Chart */}
+
+        {/* AI Agent Section */}
         <PredictoorAgent />
         
+        {/* Prediction Market Section */}
         <PredictionMarket />
+
+        {/* Meme Generator Section */}
+        <MemeGenerator />
       </main>
       
       <footer className="border-t border-white/20 py-12 bg-black/20 mt-10 backdrop-blur-sm">
