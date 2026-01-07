@@ -1,9 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
 import HowToBuy from './components/HowToBuy';
 import MemeGenerator from './components/MemeGenerator';
+
+// --- UTILITY COMPONENTS ---
+
+// Scroll Reveal Component
+const RevealOnScroll = ({ children, delay = 0 }: React.PropsWithChildren<{ delay?: number }>) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Only animate once
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-1000 transform ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Loading Screen Component
+const LoadingScreen = () => {
+    return (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm min-h-screen">
+            <div className="flex flex-col items-center">
+                {/* Glitchy Text Effect */}
+                <h1 className="text-4xl md:text-7xl font-display font-black text-white tracking-tighter mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(34,197,94,0.8)]">
+                    LOCKING IN<span className="text-green-500">...</span>
+                </h1>
+                
+                {/* Loading Bar */}
+                <div className="w-64 md:w-96 h-2 bg-gray-900/50 rounded-full overflow-hidden border border-green-500/30">
+                    <div className="h-full bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)] animate-[loadingBar_2s_ease-in-out_forwards] w-0"></div>
+                </div>
+                
+                <p className="mt-4 text-green-400 font-mono text-sm animate-pulse">ESTABLISHING CONNECTION</p>
+            </div>
+            <style>{`
+                @keyframes loadingBar {
+                    0% { width: 0%; }
+                    20% { width: 10%; }
+                    40% { width: 50%; }
+                    100% { width: 100%; }
+                }
+            `}</style>
+        </div>
+    );
+};
 
 // Background Marquee Component
 const BackgroundTicker = () => {
@@ -26,9 +89,55 @@ const BackgroundTicker = () => {
   );
 };
 
+// DexScreener Chart Component (Updated to Dark Mode)
+const DexScreenerChart = () => {
+    return (
+        <section className="py-20 container mx-auto px-4">
+             <div className="text-center mb-10">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4 text-outline uppercase">
+                    LIVE CHART
+                </h2>
+                <div className="h-1 w-20 bg-green-500 mx-auto"></div>
+            </div>
+            
+            <div className="w-full rounded-3xl overflow-hidden border-4 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.2)] bg-black">
+                {/* Specific Styles for DexScreener Embed */}
+                <style>{`
+                    #dexscreener-embed{position:relative;width:100%;padding-bottom:125%;}
+                    @media(min-width:1400px){#dexscreener-embed{padding-bottom:65%;}}
+                    #dexscreener-embed iframe{position:absolute;width:100%;height:100%;top:0;left:0;border:0;}
+                `}</style>
+                <div id="dexscreener-embed">
+                    {/* Changed theme to dark */}
+                    <iframe src="https://dexscreener.com/solana/9WJhHEvDtW56Kto8SZ5ZRMJrcwsu7u8ssSzzqiAHhsgX?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=15"></iframe>
+                </div>
+            </div>
+        </section>
+    );
+};
+
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+        setLoading(false);
+    }, 2200); // 2.2 seconds loading
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+        <>
+            <BackgroundTicker />
+            <LoadingScreen />
+        </>
+    );
+  }
+
   return (
-    <div className="min-h-screen text-white font-sans selection:bg-green-500 selection:text-black relative">
+    <div className="min-h-screen text-white font-sans selection:bg-green-500 selection:text-black relative animate-in fade-in duration-700">
       <BackgroundTicker />
       
       <div className="relative z-10">
@@ -37,15 +146,30 @@ function App() {
           <section id="hero">
             <Hero />
           </section>
-          <section id="about">
-            <About />
-          </section>
-          <section id="how-to-buy">
-            <HowToBuy />
-          </section>
-          <section id="meme-generator">
-            <MemeGenerator />
-          </section>
+          
+          <RevealOnScroll>
+            <section id="about">
+                <About />
+            </section>
+          </RevealOnScroll>
+          
+          <RevealOnScroll>
+            <section id="meme-generator">
+                <MemeGenerator />
+            </section>
+          </RevealOnScroll>
+
+          <RevealOnScroll>
+            <section id="how-to-buy">
+                <HowToBuy />
+            </section>
+          </RevealOnScroll>
+
+          <RevealOnScroll>
+            <section id="chart">
+                <DexScreenerChart />
+            </section>
+          </RevealOnScroll>
         </main>
         
         <footer className="border-t border-green-500/20 py-12 bg-black/80 mt-10 backdrop-blur-md">

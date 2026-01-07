@@ -31,6 +31,7 @@
               'marquee': 'marquee 20s linear infinite',
               'marquee-reverse': 'marqueeReverse 20s linear infinite',
               'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'twinkle': 'twinkle 4s ease-in-out infinite',
             },
             keyframes: {
               marquee: {
@@ -40,6 +41,10 @@
               marqueeReverse: {
                 '0%': { transform: 'translateX(-100%)' },
                 '100%': { transform: 'translateX(0%)' },
+              },
+              twinkle: {
+                '0%, 100%': { opacity: 0.8 },
+                '50%': { opacity: 0.3 },
               }
             }
           }
@@ -48,20 +53,27 @@
     </script>
     <style>
       body {
-        background-color: #000;
-        /* Brighter, animated gradient background */
-        background: linear-gradient(-45deg, #000000, #064e3b, #10b981, #022c22);
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        background-color: #000502;
+        /* Brighter Green Universe Background */
+        background-image: 
+            /* Stars Layer 1 */
+            radial-gradient(white, rgba(255,255,255,.8) 1px, transparent 2px),
+            /* Stars Layer 2 */
+            radial-gradient(white, rgba(255,255,255,.5) 1px, transparent 1.5px),
+            /* Main Nebula Gradient - Brighter Center */
+            radial-gradient(circle at 30% 40%, rgba(34, 197, 94, 0.25) 0%, rgba(6, 78, 59, 0.1) 40%, transparent 70%),
+            /* Secondary Nebula Gradient */
+            radial-gradient(circle at 70% 60%, rgba(16, 185, 129, 0.2) 0%, rgba(6, 95, 70, 0.1) 40%, transparent 70%),
+            /* Base Gradient */
+            linear-gradient(to bottom, #000000 0%, #022c22 100%);
+            
+        background-size: 550px 550px, 350px 350px, 100% 100%, 100% 100%, 100% 100%;
+        background-position: 0 0, 40px 60px, 0 0, 0 0, 0 0;
+        background-attachment: fixed;
+        
         color: #ffffff;
         min-height: 100vh;
         overflow-x: hidden;
-      }
-
-      @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
       }
 
       /* Custom scrollbar */
