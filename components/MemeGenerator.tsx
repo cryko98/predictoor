@@ -17,7 +17,8 @@ const MemeGenerator: React.FC = () => {
   
   const ai = new GoogleGenAI({ apiKey });
 
-  const PREDICTOOR_LOGO_URL = "https://pbs.twimg.com/media/G8TkHNYWoAIWHeT?format=jpg&name=medium";
+  // Updated to the new logo image
+  const LOCKIN_LOGO_URL = "https://pbs.twimg.com/media/G-FfKyTWcAAeT8A?format=jpg&name=small";
 
   // Helper to convert URL to Base64
   const urlToBase64 = async (url: string): Promise<string> => {
@@ -63,16 +64,16 @@ const MemeGenerator: React.FC = () => {
 
   const handleRandomMeme = async () => {
     const scenarios = [
-        "driving a green lamborghini on the moon",
-        "meditating surrounded by green candlesticks",
-        "looking at a computer screen showing +1000% gains",
-        "eating a banana while sitting on a pile of gold coins",
-        "fighting a red bear in a boxing ring",
-        "hacking into the matrix code",
+        "locking in on a computer screen intensely",
+        "sitting on a throne of cash with a focused expression",
+        "driving a cyber truck to mars",
+        "ignoring a bear market while staying focused",
+        "breaking through a wall like the kool-aid man",
+        "staring into the soul of a chart",
         "wearing deal with it sunglasses"
     ];
     const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-    const randomPrompt = `The Predictoor character ${randomScenario}, minimalist clean drawing style, meme art.`;
+    const randomPrompt = `The Lock-in character ${randomScenario}, minimalist clean drawing style, meme art.`;
     setPrompt(randomPrompt);
     await generateMeme(randomPrompt, true);
   };
@@ -86,8 +87,9 @@ const MemeGenerator: React.FC = () => {
         let imagePart = null;
         let finalPrompt = textPrompt;
 
-        // Logic: Check if we need to use the Predictoor reference
-        const usePredictoorRef = textPrompt.toLowerCase().includes('predictoor') || isRandom;
+        const lowerPrompt = textPrompt.toLowerCase();
+        // Logic: Check if we need to use the Lock-In reference
+        const useLockinRef = lowerPrompt.includes('lockin') || lowerPrompt.includes('lockin guy') || isRandom;
         
         if (customImage) {
              // User uploaded an image, prioritize that
@@ -99,16 +101,16 @@ const MemeGenerator: React.FC = () => {
                 }
              };
              finalPrompt = `Edit this image. ${textPrompt}. Keep the main subject but change the context.`;
-        } else if (usePredictoorRef) {
+        } else if (useLockinRef) {
             // Fetch the logo to use as reference
-            const base64Data = await urlToBase64(PREDICTOOR_LOGO_URL);
+            const base64Data = await urlToBase64(LOCKIN_LOGO_URL);
             imagePart = {
                 inlineData: {
                     mimeType: 'image/jpeg',
                     data: base64Data
                 }
             };
-            finalPrompt = `Generate a new image based on this character reference. The character should be ${textPrompt.replace(/predictoor/i, 'the character')}. Maintain the character's key features (hat, face) but put them in the new scene.`;
+            finalPrompt = `Generate a new image based on this character reference. The character should be ${textPrompt.replace(/lockin|lockin guy/i, 'the character')}. Maintain the character's key features (face, expression) but put them in the new scene.`;
         }
 
         const parts: any[] = [];
@@ -120,11 +122,9 @@ const MemeGenerator: React.FC = () => {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image', // Good for general image generation/editing
             contents: { parts },
-            // Note: config usually not needed for basic generation unless specific JSON schema, which we don't need for images.
         });
 
         // Extract image from response
-        // The API returns image data in the parts
         const responseParts = response.candidates?.[0]?.content?.parts;
         if (responseParts) {
             for (const part of responseParts) {
@@ -137,7 +137,6 @@ const MemeGenerator: React.FC = () => {
         }
         
         if (!generatedImage && response.text) {
-             // If no image was generated but text was (error or refusal), we might want to show it, but for now just console.
              console.log("Model returned text instead of image:", response.text);
         }
 
@@ -150,10 +149,7 @@ const MemeGenerator: React.FC = () => {
   };
 
   return (
-    <section className="py-20 relative overflow-hidden">
-        {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full bg-black/10 pointer-events-none"></div>
-
+    <section className="py-20 relative overflow-hidden bg-black/20">
         <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto">
                 
@@ -176,7 +172,7 @@ const MemeGenerator: React.FC = () => {
                             <div className="flex items-start gap-3 mb-2">
                                 <Info className="text-blue-400 mt-1 shrink-0" size={18} />
                                 <p className="text-sm text-white/80 leading-relaxed">
-                                    <span className="text-blue-400 font-bold">PRO TIP:</span> Type <span className="font-mono bg-white/20 px-1 rounded text-white">predictoor</span> in your prompt to use the official mascot as the character. Or upload your own reference image!
+                                    <span className="text-blue-400 font-bold">PRO TIP:</span> Type <span className="font-mono bg-white/20 px-1 rounded text-white">lockin</span> or <span className="font-mono bg-white/20 px-1 rounded text-white">lockin guy</span> in your prompt to use the character.
                                 </p>
                             </div>
                         </div>
@@ -187,7 +183,7 @@ const MemeGenerator: React.FC = () => {
                                     type="text" 
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
-                                    placeholder="Describe your meme (e.g., Predictoor holding a golden ticket)..."
+                                    placeholder="Describe your meme (e.g., lockin guy trading on the moon)..."
                                     className="w-full h-14 pl-4 pr-4 bg-white text-black font-bold rounded-xl border-2 border-transparent focus:border-green-400 focus:outline-none placeholder:text-gray-400 shadow-inner"
                                     onKeyDown={(e) => e.key === 'Enter' && generateMeme(prompt)}
                                 />
@@ -235,7 +231,7 @@ const MemeGenerator: React.FC = () => {
                         {isLoading && (
                             <div className="flex flex-col items-center gap-4 z-10">
                                 <Loader2 className="w-12 h-12 text-green-400 animate-spin" />
-                                <p className="text-green-400 font-mono animate-pulse">Consulting the Oracle...</p>
+                                <p className="text-green-400 font-mono animate-pulse">Locking in...</p>
                             </div>
                         )}
 
@@ -243,7 +239,7 @@ const MemeGenerator: React.FC = () => {
                             <div className="text-center p-6 opacity-40">
                                 <ImageIcon className="w-16 h-16 mx-auto mb-4 text-white" />
                                 <p className="text-white text-lg font-bold">No meme generated yet.</p>
-                                <p className="text-white/70">Enter a prompt or roll the dice!</p>
+                                <p className="text-white/70">Enter a prompt to lock in.</p>
                             </div>
                         )}
 
@@ -257,7 +253,7 @@ const MemeGenerator: React.FC = () => {
                                 <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <a 
                                         href={generatedImage} 
-                                        download={`predictoor-meme-${Date.now()}.png`}
+                                        download={`lockin-meme-${Date.now()}.png`}
                                         className="bg-white text-black font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 hover:bg-gray-200 transition-colors"
                                     >
                                         <Download size={18} />
