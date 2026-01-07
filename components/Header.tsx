@@ -21,9 +21,11 @@ const Header: React.FC = () => {
   };
 
   const navItems = [
+    { label: 'HOME', id: 'hero' },
     { label: 'ABOUT', id: 'about' },
-    { label: 'HOW TO BUY', id: 'how-to-buy' },
     { label: 'MEME AI', id: 'meme-generator' },
+    { label: 'HOW TO BUY', id: 'how-to-buy' },
+    { label: 'CHART', id: 'chart' },
   ];
 
   return (
@@ -31,7 +33,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('hero')}>
             <span className="text-2xl md:text-3xl font-display italic tracking-wider text-white uppercase drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">
                 LOCK<span className="text-green-500">-</span>IN
             </span>
