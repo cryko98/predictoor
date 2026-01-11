@@ -4,7 +4,7 @@ import { Wallet, ArrowRight, Coins, Search, CheckCircle, Copy, Check } from 'luc
 const HowToBuy: React.FC = () => {
   const ca = "HNHNHcornzS5NsMegJA8wq2Ao68xVmKrHDRFif6pump";
   const [copied, setCopied] = useState(false);
-  const raydiumUrl = `https://raydium.io/swap/?inputCurrency=sol&outputCurrency=${ca}`;
+  const pumpFunUrl = `https://pump.fun/${ca}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(ca);
@@ -25,13 +25,13 @@ const HowToBuy: React.FC = () => {
     },
     {
       icon: <Search className="text-white" size={32} />,
-      title: "Go to Raydium",
-      desc: "Connect your wallet to Raydium.io to start trading."
+      title: "Go to Pump.fun",
+      desc: "Connect your wallet to Pump.fun to start trading."
     },
     {
       icon: <CheckCircle className="text-gray-300" size={32} />,
       title: "Swap for $WHITEDOG",
-      desc: "Paste the CA below and swap SOL for $WHITEDOG."
+      desc: "Paste the CA below or find the coin on Pump.fun."
     }
   ];
 
@@ -79,12 +79,12 @@ const HowToBuy: React.FC = () => {
                 </div>
             </div>
             <a 
-                href={raydiumUrl}
+                href={pumpFunUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white hover:bg-gray-200 text-black font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)] whitespace-nowrap"
             >
-                Buy on Raydium <ArrowRight size={18} />
+                Buy on Pump.fun <ArrowRight size={18} />
             </a>
         </div>
 

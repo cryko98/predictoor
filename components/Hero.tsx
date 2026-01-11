@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Hero: React.FC = () => {
-  const raydiumUrl = "https://raydium.io/swap/?inputCurrency=sol&outputCurrency=HNHNHcornzS5NsMegJA8wq2Ao68xVmKrHDRFif6pump";
+  const pumpFunUrl = "https://pump.fun/HNHNHcornzS5NsMegJA8wq2Ao68xVmKrHDRFif6pump";
   const videoUrl = "https://wkkeyyrknmnynlcefugq.supabase.co/storage/v1/object/public/wasd/A_karakter_sszecsapja_202601112056_qcuo6.mp4";
 
   return (
@@ -43,7 +43,7 @@ const Hero: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto justify-center">
                     <a 
-                        href={raydiumUrl}
+                        href={pumpFunUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group relative bg-white hover:bg-gray-200 text-black font-display font-black text-xl px-10 py-5 uppercase tracking-wider transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] clip-path-polygon flex items-center justify-center cursor-pointer hover:scale-105"
