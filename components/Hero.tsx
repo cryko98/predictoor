@@ -15,12 +15,6 @@ const Hero: React.FC = () => {
         
         <div className="flex flex-col items-center justify-center text-center max-w-5xl mx-auto">
               
-              <div className="mb-6 animate-bounce">
-                 <span className="px-6 py-2 rounded-full bg-white text-black text-lg font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.5)] border-2 border-gray-200">
-                    $whitedog
-                 </span>
-              </div>
-
               {/* Title */}
               <h1 className="text-6xl lg:text-9xl font-display font-black mb-8 text-white text-outline leading-[0.9] tracking-tighter drop-shadow-2xl uppercase">
                 THE WHITE <br/>
