@@ -4,11 +4,11 @@ import { Copy, Check, Menu, X as XIcon } from 'lucide-react';
 const Header: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Placeholder CA
-  const ca = "COMING SOON";
+  
+  // Real CA
+  const ca = "HNHNHcornzS5NsMegJA8wq2Ao68xVmKrHDRFif6pump";
 
   const handleCopy = () => {
-    if (ca === "COMING SOON") return;
     navigator.clipboard.writeText(ca);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -63,9 +63,18 @@ const Header: React.FC = () => {
         <div className="hidden md:flex items-center gap-4">
             
             {/* Contract Address Box */}
-            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-lg pl-4 pr-3 py-1.5 shadow-inner backdrop-blur-sm">
+            <div 
+                onClick={handleCopy}
+                className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-lg pl-4 pr-3 py-1.5 shadow-inner backdrop-blur-sm cursor-pointer hover:bg-white/20 transition-colors group"
+                title="Click to Copy CA"
+            >
                 <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">CA:</span>
-                <span className="text-white text-sm font-mono font-medium truncate">{ca}</span>
+                <span className="text-white text-sm font-mono font-medium truncate max-w-[100px] xl:max-w-[150px]">
+                    {ca.slice(0, 4)}...{ca.slice(-4)}
+                </span>
+                <div className="bg-black/50 p-1.5 rounded-md">
+                    {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} className="text-white group-hover:text-gray-200" />}
+                </div>
             </div>
 
             {/* X Community Link */}
@@ -74,10 +83,23 @@ const Header: React.FC = () => {
                 target="_blank" 
                 rel="noreferrer"
                 className="bg-white hover:bg-gray-200 text-black p-2.5 rounded-lg transition-transform hover:scale-105 shadow-lg border-2 border-transparent"
-                title="Join Community"
+                title="Join X Community"
             >
                 <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+            </a>
+
+            {/* Telegram Community Link */}
+            <a 
+                href="https://t.me/THEWHITEDOGONSOL" 
+                target="_blank" 
+                rel="noreferrer"
+                className="bg-[#229ED9] hover:bg-[#1e8dbf] text-white p-2.5 rounded-lg transition-transform hover:scale-105 shadow-lg border-2 border-transparent"
+                title="Join Telegram Community"
+            >
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                 </svg>
             </a>
         </div>
@@ -105,19 +127,34 @@ const Header: React.FC = () => {
                 ))}
             </div>
              <div className="border-t border-white/10 pt-4">
-                <span className="text-xs font-mono text-gray-400 mb-2 block">CONTRACT ADDRESS</span>
-                <div className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/10">
+                <span className="text-xs font-mono text-gray-400 mb-2 block">CONTRACT ADDRESS (Tap to copy)</span>
+                <div 
+                    onClick={handleCopy}
+                    className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/10 active:bg-white/10"
+                >
                     <span className="text-white font-mono text-xs truncate mr-2">{ca}</span>
+                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-gray-400" />}
                 </div>
             </div>
-            <a 
-                href="https://x.com/thewhitedog_sol" 
-                target="_blank" 
-                rel="noreferrer"
-                className="bg-white text-black font-bold py-3 text-center rounded-lg uppercase tracking-wider"
-            >
-                Join X Community
-            </a>
+            
+            <div className="flex gap-4">
+                <a 
+                    href="https://x.com/thewhitedog_sol" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex-1 bg-white hover:bg-gray-200 text-black font-bold py-3 text-center rounded-lg uppercase tracking-wider transition-colors"
+                >
+                    X (Twitter)
+                </a>
+                <a 
+                    href="https://t.me/THEWHITEDOGONSOL" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex-1 bg-[#229ED9] hover:bg-[#1e8dbf] text-white font-bold py-3 text-center rounded-lg uppercase tracking-wider transition-colors"
+                >
+                    Telegram
+                </a>
+            </div>
         </div>
       )}
     </header>

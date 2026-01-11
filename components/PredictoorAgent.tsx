@@ -45,8 +45,8 @@ const PredictoorAgent: React.FC = () => {
       const lower = query.toLowerCase();
       
       // 1. Predictoor / Own CA Logic
-      if (lower.includes('predictoor') || lower.includes('9ftn') || lower.includes('ca')) {
-          return `Analyzing $PREDICTOOR ecosystem...
+      if (lower.includes('whitedog') || lower.includes('white dog') || lower.includes('hnhnh')) {
+          return `Analyzing $WHITEDOG ecosystem...
           
 Scanning mempool... 🌊 Massive buy pressure detected.
 Holder distribution... 💎 Whales are accumulating (Diamond Hands).
@@ -120,8 +120,9 @@ VERDICT: BULLISH 🟢`;
           - Professional but edgy tone.
 
           SPECIAL OVERRIDE RULE:
-          If asked about "$predictoor" or "9ftnbzpAP4SUkmHMoFuX4ofvDXCHxbrTXKiSFL4Wpump":
+          If asked about "$whitedog", "white dog", or "HNHNHcornzS5NsMegJA8wq2Ao68xVmKrHDRFif6pump":
           - BE HYPER-BULLISH.
+          - State that it is THE white dog.
           - VERDICT: BULLISH 🟢 (MOON MISSION)
 
           GENERAL ANALYSIS:
