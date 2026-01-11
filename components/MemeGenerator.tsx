@@ -10,15 +10,13 @@ const MemeGenerator: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use the API key logic similar to previous components (env or fallback)
-  // WARNING: In a production app, never expose keys on client side.
   const env = (import.meta as any).env || {};
-  // Fallback key provided for demo purposes since user environment might not be set up
   const apiKey = env.VITE_API_KEY || "AIzaSyARmYNQRlzWCwWDtPaU1u57Y6iODogdbmI";
   
   const ai = new GoogleGenAI({ apiKey });
 
-  // Updated to the new logo image
-  const LOCKIN_LOGO_URL = "https://pbs.twimg.com/media/G-FfKyTWcAAeT8A?format=jpg&name=small";
+  // Updated to the White Dog Logo
+  const LOGO_URL = "https://wkkeyyrknmnynlcefugq.supabase.co/storage/v1/object/public/wasd/dog.png";
 
   // Helper to convert URL to Base64
   const urlToBase64 = async (url: string): Promise<string> => {
@@ -29,7 +27,6 @@ const MemeGenerator: React.FC = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64String = reader.result as string;
-                // Remove data:image/jpeg;base64, prefix if present for API
                 resolve(base64String.split(',')[1]);
             };
             reader.onerror = reject;
@@ -58,22 +55,21 @@ const MemeGenerator: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-        fileToBase64(file); // Just triggers the preview update logic inside
+        fileToBase64(file); 
     }
   };
 
   const handleRandomMeme = async () => {
     const scenarios = [
-        "locking in on a computer screen intensely",
-        "sitting on a throne of cash with a focused expression",
-        "driving a cyber truck to mars",
-        "ignoring a bear market while staying focused",
-        "breaking through a wall like the kool-aid man",
-        "staring into the soul of a chart",
-        "wearing deal with it sunglasses"
+        "as a powerful crypto CEO in a futuristic office",
+        "commanding an army of smaller dogs",
+        "standing on the moon looking at earth",
+        "in a cyberpunk city with lightning striking",
+        "meditating with glowing eyes",
+        "breaking through a chart resistance line"
     ];
     const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-    const randomPrompt = `The Lock-in character ${randomScenario}, minimalist clean drawing style, meme art.`;
+    const randomPrompt = `The White Dog character ${randomScenario}, highly detailed, cinematic lighting, 8k resolution.`;
     setPrompt(randomPrompt);
     await generateMeme(randomPrompt, true);
   };
@@ -88,11 +84,10 @@ const MemeGenerator: React.FC = () => {
         let finalPrompt = textPrompt;
 
         const lowerPrompt = textPrompt.toLowerCase();
-        // Logic: Check if we need to use the Lock-In reference
-        const useLockinRef = lowerPrompt.includes('lockin') || lowerPrompt.includes('lockin guy') || isRandom;
+        // Logic: Check if we need to use the White Dog reference
+        const useRef = lowerPrompt.includes('white dog') || lowerPrompt.includes('dog') || isRandom;
         
         if (customImage) {
-             // User uploaded an image, prioritize that
              const base64Data = customImage.split(',')[1];
              imagePart = {
                 inlineData: {
@@ -101,16 +96,16 @@ const MemeGenerator: React.FC = () => {
                 }
              };
              finalPrompt = `Edit this image. ${textPrompt}. Keep the main subject but change the context.`;
-        } else if (useLockinRef) {
+        } else if (useRef) {
             // Fetch the logo to use as reference
-            const base64Data = await urlToBase64(LOCKIN_LOGO_URL);
+            const base64Data = await urlToBase64(LOGO_URL);
             imagePart = {
                 inlineData: {
                     mimeType: 'image/jpeg',
                     data: base64Data
                 }
             };
-            finalPrompt = `Generate a new image based on this character reference. The character should be ${textPrompt.replace(/lockin|lockin guy/i, 'the character')}. Maintain the character's key features (face, expression) but put them in the new scene.`;
+            finalPrompt = `Generate a new image based on this character reference (the white dog). The character should be ${textPrompt.replace(/white dog|dog/i, 'the character')}. Maintain the dog's white fur and facial features but adapt the scene. Dark universe atmosphere preferred.`;
         }
 
         const parts: any[] = [];
@@ -120,11 +115,10 @@ const MemeGenerator: React.FC = () => {
         parts.push({ text: finalPrompt });
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-image', // Good for general image generation/editing
+            model: 'gemini-2.5-flash-image', 
             contents: { parts },
         });
 
-        // Extract image from response
         const responseParts = response.candidates?.[0]?.content?.parts;
         if (responseParts) {
             for (const part of responseParts) {
@@ -135,14 +129,10 @@ const MemeGenerator: React.FC = () => {
                 }
             }
         }
-        
-        if (!generatedImage && response.text) {
-             console.log("Model returned text instead of image:", response.text);
-        }
 
     } catch (error) {
         console.error("Generation failed:", error);
-        alert("Failed to generate meme. Try again or check API quota.");
+        alert("Failed to generate meme. Try again.");
     } finally {
         setIsLoading(false);
     }
@@ -156,23 +146,23 @@ const MemeGenerator: React.FC = () => {
                 {/* Header */}
                 <div className="text-center mb-10">
                     <h2 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-xl flex justify-center items-center gap-3">
-                        <span className="bg-white text-black px-2 rounded-lg transform -rotate-3">MEME</span>
-                        <span style={{ textShadow: '4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000' }}>GENERATOR</span>
+                        <span className="bg-white text-black px-2 rounded-lg transform -rotate-1">MEME</span>
+                        <span className="text-outline">GENERATOR</span>
                     </h2>
-                    <p className="text-xl text-white/90 font-medium">Create legendary memes with AI.</p>
+                    <p className="text-xl text-white/90 font-medium">Unleash the creativity.</p>
                 </div>
 
                 {/* Main Card */}
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 md:p-8 shadow-2xl">
+                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl">
                     
                     {/* Controls */}
                     <div className="flex flex-col gap-6 mb-8">
                         
                         <div className="bg-black/40 rounded-xl p-4 border border-white/10">
                             <div className="flex items-start gap-3 mb-2">
-                                <Info className="text-blue-400 mt-1 shrink-0" size={18} />
+                                <Info className="text-gray-400 mt-1 shrink-0" size={18} />
                                 <p className="text-sm text-white/80 leading-relaxed">
-                                    <span className="text-blue-400 font-bold">PRO TIP:</span> Type <span className="font-mono bg-white/20 px-1 rounded text-white">lockin</span> or <span className="font-mono bg-white/20 px-1 rounded text-white">lockin guy</span> in your prompt to use the character.
+                                    <span className="text-white font-bold">PRO TIP:</span> Type <span className="font-mono bg-white/20 px-1 rounded text-white">white dog</span> in your prompt to use the character.
                                 </p>
                             </div>
                         </div>
@@ -183,8 +173,8 @@ const MemeGenerator: React.FC = () => {
                                     type="text" 
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
-                                    placeholder="Describe your meme (e.g., lockin guy trading on the moon)..."
-                                    className="w-full h-14 pl-4 pr-4 bg-white text-black font-bold rounded-xl border-2 border-transparent focus:border-green-400 focus:outline-none placeholder:text-gray-400 shadow-inner"
+                                    placeholder="Describe your meme (e.g., white dog controlling the matrix)..."
+                                    className="w-full h-14 pl-4 pr-4 bg-black/50 text-white font-bold rounded-xl border border-white/20 focus:border-white focus:outline-none placeholder:text-gray-500 shadow-inner"
                                     onKeyDown={(e) => e.key === 'Enter' && generateMeme(prompt)}
                                 />
                             </div>
@@ -199,7 +189,7 @@ const MemeGenerator: React.FC = () => {
                                 />
                                 <button 
                                     onClick={() => fileInputRef.current?.click()}
-                                    className={`h-14 px-4 rounded-xl border-2 flex items-center justify-center transition-all ${customImage ? 'bg-green-500 border-green-600 text-white' : 'bg-white/20 border-white/20 hover:bg-white/30 text-white'}`}
+                                    className={`h-14 px-4 rounded-xl border flex items-center justify-center transition-all ${customImage ? 'bg-white text-black border-white' : 'bg-white/10 border-white/20 hover:bg-white/20 text-white'}`}
                                     title="Upload Reference Image"
                                 >
                                     {customImage ? <ImageIcon size={24} /> : <Upload size={24} />}
@@ -207,7 +197,7 @@ const MemeGenerator: React.FC = () => {
                                 
                                 <button 
                                     onClick={handleRandomMeme}
-                                    className="h-14 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl border-2 border-purple-500 shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+                                    className="h-14 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-xl border border-white/20 shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
                                     title="Random Scenario"
                                 >
                                     <Shuffle size={24} />
@@ -216,7 +206,7 @@ const MemeGenerator: React.FC = () => {
                                 <button 
                                     onClick={() => generateMeme(prompt)}
                                     disabled={isLoading || !prompt}
-                                    className="h-14 px-8 bg-black hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl border-2 border-white/20 shadow-xl flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+                                    className="h-14 px-8 bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold rounded-xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
                                 >
                                     {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles />}
                                     GENERATE
@@ -226,12 +216,12 @@ const MemeGenerator: React.FC = () => {
                     </div>
 
                     {/* Result Area */}
-                    <div className="min-h-[300px] md:min-h-[400px] bg-black/50 rounded-2xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center relative overflow-hidden group">
+                    <div className="min-h-[300px] md:min-h-[400px] bg-black/50 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden group">
                         
                         {isLoading && (
                             <div className="flex flex-col items-center gap-4 z-10">
-                                <Loader2 className="w-12 h-12 text-green-400 animate-spin" />
-                                <p className="text-green-400 font-mono animate-pulse">Locking in...</p>
+                                <Loader2 className="w-12 h-12 text-white animate-spin" />
+                                <p className="text-white font-mono animate-pulse">Generating...</p>
                             </div>
                         )}
 
@@ -239,7 +229,7 @@ const MemeGenerator: React.FC = () => {
                             <div className="text-center p-6 opacity-40">
                                 <ImageIcon className="w-16 h-16 mx-auto mb-4 text-white" />
                                 <p className="text-white text-lg font-bold">No meme generated yet.</p>
-                                <p className="text-white/70">Enter a prompt to lock in.</p>
+                                <p className="text-white/70">Enter a prompt to start.</p>
                             </div>
                         )}
 
@@ -253,7 +243,7 @@ const MemeGenerator: React.FC = () => {
                                 <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <a 
                                         href={generatedImage} 
-                                        download={`lockin-meme-${Date.now()}.png`}
+                                        download={`whitedog-meme-${Date.now()}.png`}
                                         className="bg-white text-black font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 hover:bg-gray-200 transition-colors"
                                     >
                                         <Download size={18} />

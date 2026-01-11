@@ -4,9 +4,11 @@ import { Copy, Check, Menu, X as XIcon } from 'lucide-react';
 const Header: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const ca = "5SvGEbqYZ2thWTPSTBAscjUhQ2S4zcKhzTtC4TYzpump";
+  // Placeholder CA
+  const ca = "COMING SOON";
 
   const handleCopy = () => {
+    if (ca === "COMING SOON") return;
     navigator.clipboard.writeText(ca);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -25,17 +27,21 @@ const Header: React.FC = () => {
     { label: 'ABOUT', id: 'about' },
     { label: 'MEME AI', id: 'meme-generator' },
     { label: 'HOW TO BUY', id: 'how-to-buy' },
-    { label: 'CHART', id: 'chart' },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-green-500/30 bg-black/80 backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.1)]">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('hero')}>
-            <span className="text-2xl md:text-3xl font-display italic tracking-wider text-white uppercase drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">
-                LOCK<span className="text-green-500">-</span>IN
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection('hero')}>
+            <img 
+                src="https://wkkeyyrknmnynlcefugq.supabase.co/storage/v1/object/public/wasd/dog.png" 
+                alt="White Dog Logo" 
+                className="w-10 h-10 rounded-full border-2 border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+            />
+            <span className="text-2xl md:text-3xl font-display italic tracking-wider text-white uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+                WHITE<span className="text-gray-400">DOG</span>
             </span>
         </div>
 
@@ -45,10 +51,10 @@ const Header: React.FC = () => {
                 <button 
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className="text-white font-bold hover:text-green-400 transition-colors uppercase tracking-widest text-sm relative group"
+                    className="text-white font-bold hover:text-gray-300 transition-colors uppercase tracking-widest text-sm relative group"
                 >
                     {item.label}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-500 transition-all group-hover:w-full"></span>
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all group-hover:w-full"></span>
                 </button>
             ))}
         </nav>
@@ -57,24 +63,17 @@ const Header: React.FC = () => {
         <div className="hidden md:flex items-center gap-4">
             
             {/* Contract Address Box */}
-            <div className="flex items-center gap-2 bg-green-900/30 border border-green-500/50 rounded-lg pl-4 pr-1 py-1.5 shadow-inner backdrop-blur-sm">
-                <span className="text-green-400/80 text-xs font-bold uppercase tracking-wider">CA:</span>
-                <span className="text-white text-sm font-mono font-medium truncate max-w-[120px]">{ca}</span>
-                <button 
-                    onClick={handleCopy}
-                    className="p-2 rounded hover:bg-green-500/20 transition-colors border border-transparent hover:border-green-500/50"
-                    title="Copy Address"
-                >
-                    {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} className="text-white" />}
-                </button>
+            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-lg pl-4 pr-3 py-1.5 shadow-inner backdrop-blur-sm">
+                <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">CA:</span>
+                <span className="text-white text-sm font-mono font-medium truncate">{ca}</span>
             </div>
 
             {/* X Community Link */}
             <a 
-                href="https://x.com/i/communities/2009001203397742909" 
+                href="https://x.com" 
                 target="_blank" 
                 rel="noreferrer"
-                className="bg-white hover:bg-gray-200 text-black p-2.5 rounded-lg transition-transform hover:scale-105 shadow-lg border-2 border-transparent hover:border-green-500"
+                className="bg-white hover:bg-gray-200 text-black p-2.5 rounded-lg transition-transform hover:scale-105 shadow-lg border-2 border-transparent"
                 title="Join Community"
             >
                 <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
@@ -93,13 +92,13 @@ const Header: React.FC = () => {
       
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-green-500/30 p-6 flex flex-col gap-6 animate-in slide-in-from-top-5">
+        <div className="md:hidden absolute top-20 left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 p-6 flex flex-col gap-6 animate-in slide-in-from-top-5">
              <div className="flex flex-col gap-4">
                 {navItems.map((item) => (
                     <button 
                         key={item.id}
                         onClick={() => scrollToSection(item.id)}
-                        className="text-white font-display text-2xl uppercase tracking-wider hover:text-green-400 text-left"
+                        className="text-white font-display text-2xl uppercase tracking-wider hover:text-gray-400 text-left"
                     >
                         {item.label}
                     </button>
@@ -109,13 +108,10 @@ const Header: React.FC = () => {
                 <span className="text-xs font-mono text-gray-400 mb-2 block">CONTRACT ADDRESS</span>
                 <div className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/10">
                     <span className="text-white font-mono text-xs truncate mr-2">{ca}</span>
-                    <button onClick={handleCopy} className="text-white">
-                        {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
-                    </button>
                 </div>
             </div>
             <a 
-                href="https://x.com/i/communities/2009001203397742909" 
+                href="https://x.com" 
                 target="_blank" 
                 rel="noreferrer"
                 className="bg-white text-black font-bold py-3 text-center rounded-lg uppercase tracking-wider"

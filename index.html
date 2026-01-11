@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>THE GREAT LOCK-IN ($lockin)</title>
-    <link rel="icon" href="https://pbs.twimg.com/media/G-FfKyTWcAAeT8A?format=jpg&name=small" />
+    <title>THE WHITE DOG ($whitedog)</title>
+    <link rel="icon" href="https://wkkeyyrknmnynlcefugq.supabase.co/storage/v1/object/public/wasd/dog.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
             },
             colors: {
               meme: {
-                bg: '#ffffff', // Fallback
+                bg: '#ffffff', 
                 text: '#09090b', 
                 card: '#ffffff',
                 primary: '#22c55e', 
@@ -32,6 +32,7 @@
               'marquee-reverse': 'marqueeReverse 20s linear infinite',
               'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               'twinkle': 'twinkle 4s ease-in-out infinite',
+              'lightning': 'lightning 5s infinite',
             },
             keyframes: {
               marquee: {
@@ -45,6 +46,14 @@
               twinkle: {
                 '0%, 100%': { opacity: 0.8 },
                 '50%': { opacity: 0.3 },
+              },
+              lightning: {
+                '0%, 90%': { opacity: 0 },
+                '92%': { opacity: 0.1, background: 'white' },
+                '93%': { opacity: 0 },
+                '94%': { opacity: 0.05, background: 'white' },
+                '96%': { opacity: 0 },
+                '100%': { opacity: 0 }
               }
             }
           }
@@ -53,22 +62,18 @@
     </script>
     <style>
       body {
-        background-color: #000502;
-        /* Brighter Green Universe Background */
+        background-color: #050505;
+        /* Dark Universe Background */
         background-image: 
             /* Stars Layer 1 */
             radial-gradient(white, rgba(255,255,255,.8) 1px, transparent 2px),
             /* Stars Layer 2 */
             radial-gradient(white, rgba(255,255,255,.5) 1px, transparent 1.5px),
-            /* Main Nebula Gradient - Brighter Center */
-            radial-gradient(circle at 30% 40%, rgba(34, 197, 94, 0.25) 0%, rgba(6, 78, 59, 0.1) 40%, transparent 70%),
-            /* Secondary Nebula Gradient */
-            radial-gradient(circle at 70% 60%, rgba(16, 185, 129, 0.2) 0%, rgba(6, 95, 70, 0.1) 40%, transparent 70%),
-            /* Base Gradient */
-            linear-gradient(to bottom, #000000 0%, #022c22 100%);
+            /* Deep Purple/Blue Nebula */
+            radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.8) 0%, rgba(0, 0, 0, 0) 70%);
             
-        background-size: 550px 550px, 350px 350px, 100% 100%, 100% 100%, 100% 100%;
-        background-position: 0 0, 40px 60px, 0 0, 0 0, 0 0;
+        background-size: 550px 550px, 350px 350px, 100% 100%;
+        background-position: 0 0, 40px 60px, 0 0;
         background-attachment: fixed;
         
         color: #ffffff;
@@ -76,20 +81,34 @@
         overflow-x: hidden;
       }
 
+      /* Lightning Overlay */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0);
+        pointer-events: none;
+        z-index: 1;
+        animation: lightning 8s infinite;
+      }
+
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 10px;
       }
       ::-webkit-scrollbar-track {
-        background: #022c22; 
+        background: #000; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #10b981; 
+        background: #ffffff; 
         border-radius: 0px;
-        border: 2px solid #022c22;
+        border: 2px solid #000;
       }
       
-      /* Text outline utility for the meme look */
+      /* Text outline utility */
       .text-outline {
         -webkit-text-stroke: 2px black;
         paint-order: stroke fill;

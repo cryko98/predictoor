@@ -42,19 +42,19 @@ const RevealOnScroll = ({ children, delay = 0 }: React.PropsWithChildren<{ delay
 // Loading Screen Component
 const LoadingScreen = () => {
     return (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm min-h-screen">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 backdrop-blur-md min-h-screen">
             <div className="flex flex-col items-center">
-                {/* Glitchy Text Effect */}
-                <h1 className="text-4xl md:text-7xl font-display font-black text-white tracking-tighter mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(34,197,94,0.8)]">
-                    LOCKING IN<span className="text-green-500">...</span>
+                {/* Text Effect */}
+                <h1 className="text-4xl md:text-7xl font-display font-black text-white tracking-tighter mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">
+                    THE WHITE DOG
                 </h1>
                 
                 {/* Loading Bar */}
-                <div className="w-64 md:w-96 h-2 bg-gray-900/50 rounded-full overflow-hidden border border-green-500/30">
-                    <div className="h-full bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)] animate-[loadingBar_2s_ease-in-out_forwards] w-0"></div>
+                <div className="w-64 md:w-96 h-2 bg-gray-900 rounded-full overflow-hidden border border-white/30">
+                    <div className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] animate-[loadingBar_2s_ease-in-out_forwards] w-0"></div>
                 </div>
                 
-                <p className="mt-4 text-green-400 font-mono text-sm animate-pulse">ESTABLISHING CONNECTION</p>
+                <p className="mt-4 text-gray-400 font-mono text-sm animate-pulse">UNLEASHING POWER...</p>
             </div>
             <style>{`
                 @keyframes loadingBar {
@@ -71,49 +71,22 @@ const LoadingScreen = () => {
 // Background Marquee Component
 const BackgroundTicker = () => {
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-between opacity-10 select-none">
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-between opacity-5 select-none">
       {[...Array(8)].map((_, rowIndex) => (
         <div 
             key={rowIndex} 
             className={`whitespace-nowrap flex gap-8 ${rowIndex % 2 === 0 ? 'animate-marquee' : 'animate-marquee-reverse'}`}
             style={{ animationDuration: `${20 + rowIndex * 5}s` }}
         >
-          {[...Array(10)].map((_, i) => (
-            <span key={i} className="text-[10vh] font-display font-black text-white/20 uppercase tracking-tighter">
-              LOCK IN
+          {[...Array(6)].map((_, i) => (
+            <span key={i} className="text-[10vh] font-display font-black text-white/50 uppercase tracking-tighter">
+              THE WHITE DOG
             </span>
           ))}
         </div>
       ))}
     </div>
   );
-};
-
-// DexScreener Chart Component (Updated to Dark Mode)
-const DexScreenerChart = () => {
-    return (
-        <section className="py-20 container mx-auto px-4">
-             <div className="text-center mb-10">
-                <h2 className="text-4xl md:text-5xl font-black text-white mb-4 text-outline uppercase">
-                    LIVE CHART
-                </h2>
-                <div className="h-1 w-20 bg-green-500 mx-auto"></div>
-            </div>
-            
-            <div className="w-full rounded-3xl overflow-hidden border-4 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.2)] bg-black">
-                {/* Specific Styles for DexScreener Embed */}
-                <style>{`
-                    #dexscreener-embed{position:relative;width:100%;padding-bottom:125%;}
-                    @media(min-width:1400px){#dexscreener-embed{padding-bottom:65%;}}
-                    #dexscreener-embed iframe{position:absolute;width:100%;height:100%;top:0;left:0;border:0;}
-                `}</style>
-                <div id="dexscreener-embed">
-                    {/* Changed theme to dark */}
-                    <iframe src="https://dexscreener.com/solana/9WJhHEvDtW56Kto8SZ5ZRMJrcwsu7u8ssSzzqiAHhsgX?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=15"></iframe>
-                </div>
-            </div>
-        </section>
-    );
 };
 
 function App() {
@@ -137,7 +110,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen text-white font-sans selection:bg-green-500 selection:text-black relative animate-in fade-in duration-700">
+    <div className="min-h-screen text-white font-sans selection:bg-white selection:text-black relative animate-in fade-in duration-700">
       <BackgroundTicker />
       
       <div className="relative z-10">
@@ -165,20 +138,15 @@ function App() {
             </section>
           </RevealOnScroll>
 
-          <RevealOnScroll>
-            <section id="chart">
-                <DexScreenerChart />
-            </section>
-          </RevealOnScroll>
         </main>
         
-        <footer className="border-t border-green-500/20 py-12 bg-black/80 mt-10 backdrop-blur-md">
+        <footer className="border-t border-white/10 py-12 bg-black/80 mt-10 backdrop-blur-md">
           <div className="container mx-auto px-4 text-center text-white/80">
               <div className="flex justify-center items-center gap-2 mb-4">
-                  <span className="font-display italic text-white text-3xl drop-shadow-[0_0_10px_rgba(34,197,94,0.5)] uppercase">THE GREAT LOCK-IN</span>
+                  <span className="font-display italic text-white text-3xl drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] uppercase">THE WHITE DOG</span>
               </div>
               <p className="mb-2 font-medium tracking-wide">© 2026 All rights reserved.</p>
-              <p className="text-sm opacity-50 mb-6 font-mono">Disclaimer: $lockin is a memecoin for entertainment purposes only.</p>
+              <p className="text-sm opacity-50 mb-6 font-mono">Disclaimer: $whitedog is a memecoin for entertainment purposes only.</p>
               
               <div className="flex justify-center items-center gap-2 pt-4 border-t border-white/10 w-full max-w-xs mx-auto">
                   <span className="text-sm font-bold text-white/60 uppercase">Web dev:</span>
@@ -186,7 +154,7 @@ function App() {
                       href="https://t.me/Maximus00115" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-green-400 hover:text-white transition-colors"
+                      className="text-white hover:text-gray-300 transition-colors"
                       title="Contact Developer on Telegram"
                   >
                       <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
