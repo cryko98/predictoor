@@ -37,7 +37,7 @@ const Hero: React.FC = () => {
                     </button>
                     
                     <a 
-                        href="https://x.com"
+                        href="https://x.com/thewhitedog_sol"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group bg-black/80 backdrop-blur-md text-white font-display font-black text-xl px-10 py-5 uppercase tracking-wider hover:bg-gray-900 transition-all border-2 border-white/20 hover:border-white shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center"

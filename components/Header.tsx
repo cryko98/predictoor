@@ -70,7 +70,7 @@ const Header: React.FC = () => {
 
             {/* X Community Link */}
             <a 
-                href="https://x.com" 
+                href="https://x.com/thewhitedog_sol" 
                 target="_blank" 
                 rel="noreferrer"
                 className="bg-white hover:bg-gray-200 text-black p-2.5 rounded-lg transition-transform hover:scale-105 shadow-lg border-2 border-transparent"
@@ -111,7 +111,7 @@ const Header: React.FC = () => {
                 </div>
             </div>
             <a 
-                href="https://x.com" 
+                href="https://x.com/thewhitedog_sol" 
                 target="_blank" 
                 rel="noreferrer"
                 className="bg-white text-black font-bold py-3 text-center rounded-lg uppercase tracking-wider"
